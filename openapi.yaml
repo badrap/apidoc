@@ -7,7 +7,7 @@ security:
 paths:
   /app/token:
     post:
-      summary: Validate a bearer token.
+      summary: Validate a bearer token
       requestBody:
         required: true
         content:
@@ -30,19 +30,20 @@ paths:
                   installationId:
                     type: string
                     format: uuid
-                    description:
+                    description: |-
                       The ID of the installation that the request is done
                       for.
                   sessionId:
                     type: string
-                    description:
+                    description: |-
                       An opaque string associated with the browser session
                       the request is done in behalf of.
                   expiresAt:
                     type: number
-                    description:
+                    description: |-
                       The expiration timestamp of this token, in seconds
                       since the epoch.
+                    example: 1622496600.5
                 required:
                   - installationId
                   - sessionId
@@ -53,7 +54,7 @@ paths:
           description: Invalid token
   /app/installations:
     get:
-      summary: Returns a list of installations.
+      summary: List installations
       responses:
         "200":
           description: OK
@@ -76,13 +77,13 @@ paths:
     parameters:
       - $ref: "#/components/parameters/installationId"
     get:
-      summary: Gets an installation by ID.
+      summary: Get an installation by ID
       responses:
         "200":
           description: OK
           headers:
             ETag:
-              description:
+              description: |-
                 Entity Tag header that changes whenever the installation's
                 state object is updated (regardless whether the state object
                 actually changes).
@@ -107,7 +108,7 @@ paths:
         "404":
           description: Not Found
     patch:
-      summary: Updates installation state and/or assets.
+      summary: Update installation state and/or assets
       parameters:
         - name: If-Match
           in: header
@@ -147,7 +148,8 @@ paths:
           description: OK
           headers:
             ETag:
-              description: Entity Tag header of the installation's (potentially updated) state object.
+              description: |-
+                Entity Tag header of the installation's (potentially updated) state object.
               schema:
                 type: string
         "400":
@@ -159,7 +161,7 @@ paths:
         "428":
           description: If-Match header missing
     delete:
-      summary: Deletes an installation.
+      summary: Delete an installation
       responses:
         "204":
           description: The installation was deleted successfully
@@ -171,7 +173,7 @@ paths:
     parameters:
       - $ref: "#/components/parameters/installationId"
     get:
-      summary: "Gets a list of installation owner's (user's) assets."
+      summary: "List installation owner's assets"
       responses:
         "200":
           description: "OK"
