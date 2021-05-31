@@ -1,0 +1,9 @@
+{
+  "files.exclude": {
+    "node_modules": true,
+    "dist": true
+  },
+  "editor.formatOnSave": true,
+  "editor.tabSize": 2,
+  "editor.defaultFormatter": "esbenp.prettier-vscode"
+}
