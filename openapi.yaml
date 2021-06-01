@@ -50,6 +50,8 @@ paths:
                   - expiresAt
         "400":
           description: Bad Request
+        "403":
+          $ref: "#/components/responses/Forbidden"
         "404":
           description: Invalid token
   /app/installations:
@@ -73,6 +75,8 @@ paths:
                   required:
                     - id
                     - removed
+        "403":
+          $ref: "#/components/responses/Forbidden"
   /app/installations/{id}:
     parameters:
       - $ref: "#/components/parameters/installationId"
@@ -105,6 +109,8 @@ paths:
                   - id
                   - removed
                   - state
+        "403":
+          $ref: "#/components/responses/Forbidden"
         "404":
           description: Not Found
     patch:
@@ -154,6 +160,8 @@ paths:
                 type: string
         "400":
           description: Bad Request
+        "403":
+          $ref: "#/components/responses/Forbidden"
         "404":
           description: Not Found
         "412":
@@ -165,6 +173,8 @@ paths:
       responses:
         "204":
           description: The installation was deleted successfully
+        "403":
+          $ref: "#/components/responses/Forbidden"
         "404":
           description: The installation was not found
         "405":
@@ -186,6 +196,8 @@ paths:
                     - $ref: "#/components/schemas/IpAsset"
                     - $ref: "#/components/schemas/EmailAsset"
                     - $ref: "#/components/schemas/DomainAsset"
+        "403":
+          $ref: "#/components/responses/Forbidden"
 components:
   securitySchemes:
     bearerAuth:
@@ -256,3 +268,6 @@ components:
         type: string
         format: uuid
       required: true
+  responses:
+    Forbidden:
+      description: Forbidden
