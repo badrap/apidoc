@@ -41,5 +41,5 @@ jobs:
           git config --global user.name "${{ secrets.GIT_NAME }}"
           git config --global push.default simple
           git add -A
-          git commit -m "Update GitHub pages from ${GITHUB_SHA}"
+          git commit --allow-empty -m "Update GitHub pages from ${GITHUB_SHA}"
           git push
