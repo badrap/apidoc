@@ -1,0 +1,25 @@
+version: "2.4"
+
+services:
+  docs:
+    init: true
+    image: redocly/redoc
+    volumes:
+      - .:/usr/share/nginx/html/openapi:ro
+    environment:
+      SPEC_URL: openapi/openapi.yaml
+    ports:
+      - "127.0.0.1:8080:80"
+
+  workspace:
+    build:
+      context: .
+    volumes:
+      - .:/workspace:cached
+      - node_modules:/workspace/node_modules
+      - dist:/workspace/dist
+    command: /bin/sh -c "while sleep 1000; do :; done"
+
+volumes:
+  dist: {}
+  node_modules: {}
