@@ -4,10 +4,18 @@ info:
   version: 0.10.1
 security:
   - bearerAuth: []
+tags:
+  - name: Installations
+    description: Installation management
+  - name: Feeds
+    description: Feed management
+  - name: UI
 paths:
   /app/token:
     post:
       summary: Validate a bearer token
+      tags:
+        - UI
       requestBody:
         required: true
         content:
@@ -57,6 +65,8 @@ paths:
   /app/installations:
     get:
       summary: List installations
+      tags:
+        - Installations
       responses:
         "200":
           description: OK
@@ -82,6 +92,8 @@ paths:
       - $ref: "#/components/parameters/installationId"
     get:
       summary: Get an installation by ID
+      tags:
+        - Installations
       responses:
         "200":
           description: OK
@@ -115,6 +127,8 @@ paths:
           description: Not Found
     patch:
       summary: Update installation state and/or assets
+      tags:
+        - Installations
       parameters:
         - name: If-Match
           in: header
@@ -170,6 +184,8 @@ paths:
           description: If-Match header missing
     delete:
       summary: Delete an installation
+      tags:
+        - Installations
       responses:
         "204":
           description: The installation was deleted successfully
@@ -184,9 +200,11 @@ paths:
       - $ref: "#/components/parameters/installationId"
     get:
       summary: "List installation owner's assets"
+      tags:
+        - Installations
       responses:
         "200":
-          description: "OK"
+          description: OK
           content:
             application/json:
               schema:
@@ -198,6 +216,155 @@ paths:
                     - $ref: "#/components/schemas/DomainAsset"
         "403":
           $ref: "#/components/responses/Forbidden"
+  /app/feeds:
+    get:
+      summary: List feeds
+      tags:
+        - Feeds
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      $ref: "#/components/schemas/FeedName"
+                  required:
+                    - name
+        "403":
+          $ref: "#/components/responses/Forbidden"
+    post:
+      summary: Create a feed
+      tags:
+        - Feeds
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/FeedProperties"
+                - type: object
+                  required:
+                    - name
+      responses:
+        "201":
+          description: Created
+          headers:
+            ETag:
+              description: Entity Tag header that changes whenever the feed is updated.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Feed"
+        "400":
+          description: Bad Request
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          description: Conflict
+  /app/feeds/{name}:
+    parameters:
+      - $ref: "#/components/parameters/feedName"
+    get:
+      summary: Get a feed by name
+      tags:
+        - Feeds
+      responses:
+        "200":
+          description: OK
+          headers:
+            ETag:
+              description: Entity Tag header that changes whenever the feed is updated.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Feed"
+        "304":
+          description: Not Modified
+        "400":
+          description: Bad Request
+        "403":
+          $ref: "#/components/responses/Forbidden"
+    patch:
+      summary: Modify a feed
+      tags:
+        - Feeds
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FeedProperties"
+      responses:
+        "200":
+          description: OK
+          headers:
+            ETag:
+              description: Entity Tag header that changes whenever the feed is updated.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Feed"
+        "400":
+          description: Bad Request
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "412":
+          description: Precondition Failed
+        "428":
+          description: If-Match header missing
+    delete:
+      summary: Delete a feed
+      tags:
+        - Feeds
+      responses:
+        "204":
+          description: The feed was deleted successfully
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: Not Found
+  /app/feeds/{name}/events:
+    parameters:
+      - $ref: "#/components/parameters/feedName"
+    post:
+      summary: Send globally-scoped events to a feed
+      tags:
+        - Feeds
+      responses:
+        "204":
+          description: No Content
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: Not Found
+  /installations/{id}/feeds/{name}/events:
+    parameters:
+      - $ref: "#/components/parameters/installationId"
+      - $ref: "#/components/parameters/feedName"
+    post:
+      description: Send installation-scoped events to a feed
+      tags:
+        - Feeds
+        - Installations
+      responses:
+        "204":
+          description: No Content
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: Not Found
 components:
   securitySchemes:
     bearerAuth:
@@ -214,9 +381,10 @@ components:
           oneOf:
             - type: string
               format: ipv4
+              example: "192.0.2.100"
             - type: string
               format: ipv6
-          example: "192.0.2.100"
+              example: "2001:db8::7334"
       required:
         - type
         - value
@@ -228,7 +396,7 @@ components:
           enum: ["domain"]
         value:
           type: string
-          format: domain
+          format: hostname
           example: "host.example.com"
       required:
         - type
@@ -259,6 +427,36 @@ components:
       required:
         - type
         - value
+    FeedName:
+      type: string
+      pattern: "^[a-z0-9_-]{1,32}$"
+      minLength: 1
+      maxLength: 32
+    FeedProperties:
+      type: object
+      properties:
+        name:
+          $ref: "#/components/schemas/FeedName"
+        title:
+          type: string
+          nullable: true
+        summaryTemplate:
+          $ref: "#/components/schemas/SummaryTemplate"
+          nullable: true
+        detailsTemplate:
+          $ref: "#/components/schemas/DetailsTemplate"
+          nullable: true
+    Feed:
+      allOf:
+        - $ref: "#/components/schemas/FeedProperties"
+        - type: object
+          required:
+            - name
+            - title
+            - summaryTemplate
+            - detailsTemplate
+    SummaryTemplate: {}
+    DetailsTemplate: {}
   parameters:
     installationId:
       description: ID of an installation
@@ -267,6 +465,13 @@ components:
       schema:
         type: string
         format: uuid
+      required: true
+    feedName:
+      description: Name of a feed
+      name: name
+      in: path
+      schema:
+        $ref: "#/components/schemas/FeedName"
       required: true
   responses:
     Forbidden:
