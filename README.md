@@ -12,6 +12,6 @@ Start the development environment with the following command:
 docker-compose up --build
 ```
 
-When the containers are running the current version of the documentation is served at http://localhost:8080.
+When the containers are running the current version of the documentation is served at http://localhost:8081.
 
 The documentation is regenerated whenever the OpenAPI specification file is saved (with a small delay). Note that the browser will not automatically refresh when the page changes - you have to do it manually.
