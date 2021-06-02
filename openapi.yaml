@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Badrap App API
-  version: 0.10.1
+  version: 0.10.2
 security:
   - bearerAuth: []
 tags:
@@ -342,6 +342,14 @@ paths:
       summary: Send globally-scoped events to a feed
       tags:
         - Feeds
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/Event"
       responses:
         "204":
           description: No Content
@@ -358,6 +366,14 @@ paths:
       tags:
         - Feeds
         - Installations
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/Event"
       responses:
         "204":
           description: No Content
@@ -378,6 +394,7 @@ components:
           type: string
           enum: ["ip"]
         value:
+          description: an IPv4 or IPv6 address
           oneOf:
             - type: string
               format: ipv4
@@ -457,6 +474,23 @@ components:
             - detailsTemplate
     SummaryTemplate: {}
     DetailsTemplate: {}
+    Event:
+      allOf:
+        - oneOf:
+            - $ref: "#/components/schemas/IpAsset"
+            - $ref: "#/components/schemas/EmailAsset"
+            - $ref: "#/components/schemas/DomainAsset"
+            - $ref: "#/components/schemas/OpaqueAsset"
+        - type: object
+          properties:
+            key:
+              type: string
+              format: byte
+              maxLength: 64
+              example: "AAAAAA=="
+            props:
+              type: object
+              example: { extra: "info" }
   parameters:
     installationId:
       description: ID of an installation
