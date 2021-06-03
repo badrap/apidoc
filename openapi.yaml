@@ -53,9 +53,9 @@ paths:
                       since the epoch.
                     example: 1622496600.5
                 required:
-                  - installationId
-                  - sessionId
-                  - expiresAt
+                  - installation_id
+                  - session_id
+                  - expires_at
         "400":
           description: Bad Request
         "403":
@@ -476,8 +476,8 @@ components:
           required:
             - name
             - title
-            - summaryTemplate
-            - detailsTemplate
+            - summary_template
+            - details_template
     SummaryTemplate: {}
     DetailsTemplate: {}
     Event:
