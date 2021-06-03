@@ -13,7 +13,7 @@ tags:
 paths:
   /app/token:
     post:
-      summary: Validate a bearer token
+      summary: Validate an incoming bearer token
       tags:
         - UI
       requestBody:
