@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "build": "rm -rf dist/* && redoc-cli bundle openapi.yaml -o dist/index.html"
+    "build": "rm -rf dist/* && redoc-cli bundle openapi/openapi.yaml -o dist/index.html"
   },
   "devDependencies": {
     "prettier": "^2.3.0",

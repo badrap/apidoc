@@ -3,13 +3,14 @@ services:
     init: true
     image: redocly/redoc
     volumes:
-      - .:/usr/share/nginx/html/openapi:ro
+      - ./openapi:/usr/share/nginx/html/openapi:ro
     environment:
       SPEC_URL: openapi/openapi.yaml
     ports:
       - "127.0.0.1:8081:80"
 
   workspace:
+    init: true
     build:
       context: .
     volumes:
