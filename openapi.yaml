@@ -298,6 +298,12 @@ paths:
       summary: Modify a feed
       tags:
         - Feeds
+      parameters:
+        - name: If-Match
+          in: header
+          schema:
+            type: string
+          required: true
       requestBody:
         required: true
         content:
